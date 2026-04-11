@@ -104,39 +104,15 @@ function render(data) {
   const app = document.getElementById('app');
 
   const liveRows = data.liveRanking.map((item, i) => renderRankRow(item, i, true)).join('');
-  const stage1Rows = data.stage1.map((item, i) => renderRankRow(item, i, false)).join('');
-  const finalRows = data.finalMatch.map((item, i) => renderRankRow(item, i, false)).join('');
 
   app.innerHTML = `
-    <div class="columns-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <h2>1. AŞAMA</h2>
-          <div class="accent-line"></div>
-        </div>
-        <div class="ranking-list">
-          ${stage1Rows}
-        </div>
+    <div class="panel live-panel">
+      <div class="panel-header">
+        <h2>CANLI SIRALAMA</h2>
+        <div class="accent-line"></div>
       </div>
-
-      <div class="panel live-panel">
-        <div class="panel-header">
-          <h2>CANLI SIRALAMA</h2>
-          <div class="accent-line"></div>
-        </div>
-        <div class="ranking-list">
-          ${liveRows}
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <h2>FİNAL MAÇI</h2>
-          <div class="accent-line"></div>
-        </div>
-        <div class="ranking-list">
-          ${finalRows}
-        </div>
+      <div class="ranking-list">
+        ${liveRows}
       </div>
     </div>
   `;
