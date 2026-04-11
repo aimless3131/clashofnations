@@ -1,0 +1,319 @@
+/* === Font Faces === */
+@font-face {
+  font-family: 'Morganite';
+  src: url('assets/fonts/MORGANITE-SEMIBOLD.TTF') format('truetype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'Morganite';
+  src: url('assets/fonts/MORGANITE-BOLD.TTF') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Morganite';
+  src: url('assets/fonts/MORGANITE-EXTRABOLD.TTF') format('truetype');
+  font-weight: 800;
+}
+@font-face {
+  font-family: 'Morganite';
+  src: url('assets/fonts/MORGANITE-BLACK.TTF') format('truetype');
+  font-weight: 900;
+}
+@font-face {
+  font-family: 'Agency FB';
+  src: url('assets/fonts/AGENCYB%20(1).TTF') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Agency FB';
+  src: url('assets/fonts/UFONTS.COM_AGENCYFB-BLACK.TTF') format('truetype');
+  font-weight: 900;
+}
+
+/* === Reset & Base === */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #0a0604;
+  color: #c69b77;
+  font-family: 'Agency FB', 'Segoe UI', sans-serif;
+}
+
+/* === Background === */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url('assets/bg.png') center center / cover no-repeat;
+}
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 6, 4, 0.5) 0%,
+    rgba(10, 6, 4, 0.7) 40%,
+    rgba(10, 6, 4, 0.9) 100%
+  );
+}
+
+/* === Main Container === */
+.container {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* === Page Title / Logos === */
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.logo-hotdrop {
+  height: 75px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.logo-severnik {
+  height: 45px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.logo-x {
+  font-family: 'Morganite', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #8e5a34;
+  text-transform: lowercase;
+}
+
+/* === App Grid (3 Columns) === */
+#app {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.columns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  min-height: 0;
+}
+
+.columns-grid .live-panel {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+
+/* === Section Panel === */
+.panel {
+  background: linear-gradient(
+    180deg,
+    rgba(46, 28, 14, 0.82) 0%,
+    rgba(20, 10, 4, 0.9) 100%
+  );
+  border: 1px solid rgba(142, 90, 52, 0.3);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid rgba(142, 90, 52, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.panel-header h2 {
+  font-family: 'Morganite', sans-serif;
+  font-weight: 800;
+  font-size: 2.2rem;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #c69b77;
+  line-height: 1;
+  white-space: nowrap;
+}
+.panel-header .accent-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(198, 155, 119, 0.4), transparent);
+}
+
+/* === Canlı Sıralama (center highlight) === */
+.live-panel {
+  border-color: rgba(198, 155, 119, 0.4);
+}
+.live-panel .panel-header {
+  border-bottom-color: rgba(198, 155, 119, 0.3);
+}
+.live-panel .panel-header h2 {
+  font-weight: 900;
+  font-size: 2.4rem;
+  letter-spacing: 6px;
+}
+
+/* === Ranking List === */
+.ranking-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  padding: 0 16px;
+  flex: 1;
+  border-bottom: 1px solid rgba(142, 90, 52, 0.08);
+  transition: background 0.2s ease;
+}
+.rank-row:last-child {
+  border-bottom: none;
+}
+.rank-row:hover {
+  background: rgba(198, 155, 119, 0.06);
+}
+
+.rank-number {
+  font-family: 'Morganite', sans-serif;
+  font-weight: 900;
+  font-size: 1.7rem;
+  color: #8e5a34;
+  line-height: 1;
+}
+
+.team-name {
+  font-family: 'Agency FB', sans-serif;
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ddc5a8;
+}
+
+.points {
+  font-family: 'Agency FB', sans-serif;
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  text-align: right;
+  color: #c69b77;
+}
+.points span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #8e5a34;
+  margin-left: 3px;
+  letter-spacing: 2px;
+}
+
+/* === Live panel rows slightly larger === */
+.live-panel .rank-row {
+  grid-template-columns: 40px 1fr auto;
+}
+.live-panel .rank-number {
+  font-size: 1.9rem;
+}
+.live-panel .team-name {
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+}
+.live-panel .points {
+  font-size: 1.25rem;
+}
+
+/* === Top 3 Highlights === */
+.rank-row.top-1 .rank-number { color: #f0c850; text-shadow: 0 0 10px rgba(240, 200, 80, 0.35); }
+.rank-row.top-2 .rank-number { color: #c0c0c0; text-shadow: 0 0 8px rgba(192, 192, 192, 0.25); }
+.rank-row.top-3 .rank-number { color: #cd7f32; text-shadow: 0 0 8px rgba(205, 127, 50, 0.25); }
+
+.rank-row.top-1 .team-name { color: #f5e0a0; }
+.rank-row.top-2 .team-name { color: #e0e0e0; }
+.rank-row.top-3 .team-name { color: #e0a870; }
+
+/* === Loading / Error === */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: 'Agency FB', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #8e5a34;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #c0605a;
+  font-family: 'Agency FB', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .columns-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    overflow-y: auto;
+  }
+  .columns-grid .live-panel {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  html, body {
+    overflow: auto;
+  }
+  .container {
+    height: auto;
+    min-height: 100vh;
+  }
+  .panel {
+    min-height: 400px;
+  }
+  .rank-row {
+    padding: 6px 12px;
+    flex: unset;
+  }
+}
