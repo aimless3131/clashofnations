@@ -74,8 +74,8 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 16px 24px 20px;
-  max-width: 1600px;
+  padding: 16px 40px 20px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -114,8 +114,6 @@ body {
   flex: 1;
   display: flex;
   min-height: 0;
-  max-width: 700px;
-  margin: 0 auto;
   width: 100%;
 }
 
@@ -135,6 +133,8 @@ body {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+  width: 100%;
+  flex: 1;
 }
 
 .panel-header {
@@ -188,7 +188,7 @@ body {
   align-items: center;
   padding: 0 16px;
   flex: 1;
-  border-bottom: 1px solid rgba(142, 90, 52, 0.08);
+  border-bottom: 2px solid rgba(142, 90, 52, 0.25);
   transition: background 0.2s ease;
 }
 .rank-row:last-child {
@@ -212,7 +212,7 @@ body {
   font-size: 1.05rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #ddc5a8;
+  color: #ffffff;
 }
 
 .points {
@@ -221,39 +221,33 @@ body {
   font-size: 1.15rem;
   letter-spacing: 1px;
   text-align: right;
-  color: #c69b77;
+  color: #ffffff;
 }
 .points span {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #8e5a34;
+  color: #ffffff;
   margin-left: 3px;
   letter-spacing: 2px;
 }
 
 /* === Live panel rows slightly larger === */
 .live-panel .rank-row {
-  grid-template-columns: 40px 1fr auto;
+  grid-template-columns: 70px 1fr auto;
+  padding: 0 40px;
 }
 .live-panel .rank-number {
-  font-size: 1.9rem;
+  font-size: 2.8rem;
 }
 .live-panel .team-name {
-  font-size: 1.15rem;
-  letter-spacing: 2px;
+  font-size: 1.6rem;
+  letter-spacing: 3px;
 }
 .live-panel .points {
-  font-size: 1.25rem;
+  font-size: 1.7rem;
 }
 
-/* === Top 3 Highlights === */
-.rank-row.top-1 .rank-number { color: #f0c850; text-shadow: 0 0 10px rgba(240, 200, 80, 0.35); }
-.rank-row.top-2 .rank-number { color: #c0c0c0; text-shadow: 0 0 8px rgba(192, 192, 192, 0.25); }
-.rank-row.top-3 .rank-number { color: #cd7f32; text-shadow: 0 0 8px rgba(205, 127, 50, 0.25); }
-
-.rank-row.top-1 .team-name { color: #f5e0a0; }
-.rank-row.top-2 .team-name { color: #e0e0e0; }
-.rank-row.top-3 .team-name { color: #e0a870; }
+/* === Top 3 — aynı renk === */
 
 /* === Loading / Error === */
 .loading {
