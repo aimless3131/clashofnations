@@ -31,55 +31,79 @@ function parseCSV(text) {
   return rows;
 }
 
+function num(v) {
+  const n = parseInt(v, 10);
+  return isNaN(n) ? 0 : n;
+}
+
 function extractData(rows) {
-  // 1. Aşama: rows 1-10 (index 1-10, header at 0)
-  const stage1 = [];
+  // 1. Aşama: Team(0), Total Kill(1), WWCD(2), Total(5)
+  const stage1 = {};
   for (let i = 1; i <= 10; i++) {
     const r = rows[i];
     if (!r || !r[0]) continue;
-    stage1.push({
-      team: r[0],
-      total: parseInt(r[5], 10) || 0
-    });
+    stage1[r[0]] = {
+      kills: num(r[1]),
+      wwcd: num(r[2]),
+      total: num(r[5])
+    };
   }
-  stage1.sort((a, b) => b.total - a.total);
 
-  // Final Maçı: find "Final Maçı" row, then skip "Teams" header, take 10 rows
+  // Final: Team(0), Kill(3), Placement(4), Total(5)
   let finalStart = -1;
   for (let i = 0; i < rows.length; i++) {
     if (rows[i][0] && rows[i][0].toLowerCase().includes('final')) {
-      finalStart = i + 2; // skip "Final Maçı" and "Teams" rows
+      finalStart = i + 2;
       break;
     }
   }
-
-  const finalMatch = [];
+  const final = {};
   if (finalStart > 0) {
     for (let i = finalStart; i < finalStart + 10 && i < rows.length; i++) {
       const r = rows[i];
       if (!r || !r[0]) continue;
-      finalMatch.push({
-        team: r[0],
-        total: parseInt(r[5], 10) || 0
-      });
+      final[r[0]] = {
+        kill: num(r[3]),
+        placement: num(r[4]),
+        total: num(r[5])
+      };
     }
   }
-  finalMatch.sort((a, b) => b.total - a.total);
 
-  // Canlı Sıralama: columns 7-8 (index 7, 8) from rows 1-10
-  const liveRanking = [];
+  // Canlı sıralama (total points): Team(7), Total(8)
+  const liveMap = {};
   for (let i = 1; i <= 10; i++) {
     const r = rows[i];
     if (!r || !r[7]) continue;
-    liveRanking.push({
-      team: r[7],
-      total: parseInt(r[8], 10) || 0
-    });
+    liveMap[r[7]] = num(r[8]);
   }
-  // Already sorted in sheet, but ensure sort
-  liveRanking.sort((a, b) => b.total - a.total);
 
-  return { stage1, finalMatch, liveRanking };
+  // Merge into single rows per team, sorted by total
+  const teams = [];
+  const teamNames = new Set([
+    ...Object.keys(stage1),
+    ...Object.keys(final),
+    ...Object.keys(liveMap)
+  ]);
+
+  teamNames.forEach(name => {
+    const s1 = stage1[name] || { kills: 0, wwcd: 0 };
+    const f = final[name] || { kill: 0, placement: 0 };
+    const total = liveMap[name] !== undefined
+      ? liveMap[name]
+      : (s1.total || 0) + (f.total || 0);
+    teams.push({
+      team: name,
+      s1Kills: s1.kills,
+      s1Wwcd: s1.wwcd,
+      fKill: f.kill,
+      fPlacement: f.placement,
+      total
+    });
+  });
+
+  teams.sort((a, b) => b.total - a.total);
+  return teams;
 }
 
 function getTopClass(index) {
@@ -89,30 +113,47 @@ function getTopClass(index) {
   return '';
 }
 
-function renderRankRow(item, index, showPts) {
-  const ptsLabel = showPts ? '<span>PTS</span>' : '';
+function tableRow(item, index) {
   return `
-    <div class="rank-row ${getTopClass(index)}">
-      <div class="rank-number">${index + 1}</div>
-      <div class="team-name">${item.team}</div>
-      <div class="points">${item.total}${ptsLabel}</div>
+    <div class="row ${getTopClass(index)}">
+      <div class="cell rank">#${index + 1}</div>
+      <div class="cell team">${item.team}</div>
+      <div class="cell">${item.s1Kills}</div>
+      <div class="cell">${item.s1Wwcd}</div>
+      <div class="cell">${item.fKill}</div>
+      <div class="cell">${item.fPlacement}</div>
+      <div class="cell total">${item.total}</div>
     </div>
   `;
 }
 
-function render(data) {
+function render(teams) {
   const app = document.getElementById('app');
-
-  const liveRows = data.liveRanking.map((item, i) => renderRankRow(item, i, true)).join('');
+  const rows = teams.map(tableRow).join('');
 
   app.innerHTML = `
-    <div class="panel live-panel">
-      <div class="panel-header">
-        <h2>CANLI SIRALAMA</h2>
-        <div class="accent-line"></div>
+    <div class="leaderboard">
+      <div class="board-title">ANTİK GİZEM YÜKSELİŞ</div>
+
+      <div class="group-header">
+        <div class="gh-spacer"></div>
+        <div class="gh-group">1. AŞAMA</div>
+        <div class="gh-group">ŞOV MAÇI</div>
+        <div class="gh-spacer end"></div>
       </div>
-      <div class="ranking-list">
-        ${liveRows}
+
+      <div class="col-header">
+        <div class="cell rank">SIRA</div>
+        <div class="cell team">TAKIM</div>
+        <div class="cell">TOTAL SKOR</div>
+        <div class="cell">WWCD</div>
+        <div class="cell">SKOR</div>
+        <div class="cell">SIRALAMA</div>
+        <div class="cell total">TOPLAM</div>
+      </div>
+
+      <div class="rows-list">
+        ${rows}
       </div>
     </div>
   `;
@@ -133,27 +174,21 @@ async function init() {
   try {
     const text = await fetchData();
     lastCSV = text;
-    const rows = parseCSV(text);
-    const data = extractData(rows);
-    render(data);
+    const teams = extractData(parseCSV(text));
+    render(teams);
   } catch (err) {
     console.error('Veri yüklenirken hata:', err);
     app.innerHTML = `<div class="error">Veri yüklenemedi. Sayfayı yenileyin.<br><small>${err.message}</small></div>`;
   }
 
-  // 10 saniyede bir kontrol et, sadece veri değiştiyse güncelle
   setInterval(async () => {
     try {
       const text = await fetchData();
       if (text !== lastCSV) {
         lastCSV = text;
-        const rows = parseCSV(text);
-        const data = extractData(rows);
-        render(data);
+        render(extractData(parseCSV(text)));
       }
-    } catch (e) {
-      // sessizce devam et, bağlantı koparsa mevcut veriyi göstermeye devam eder
-    }
+    } catch (e) {}
   }, 10000);
 }
 

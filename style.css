@@ -61,8 +61,8 @@ body {
   z-index: 1;
   background: linear-gradient(
     180deg,
-    rgba(10, 6, 4, 0.75) 0%,
-    rgba(10, 6, 4, 0.88) 40%,
+    rgba(10, 6, 4, 0.78) 0%,
+    rgba(10, 6, 4, 0.9) 40%,
     rgba(10, 6, 4, 0.96) 100%
   );
 }
@@ -74,8 +74,8 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 16px 40px 20px;
-  max-width: 1400px;
+  padding: 20px 40px 24px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 
@@ -85,7 +85,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding-bottom: 14px;
+  padding-bottom: 18px;
   flex-shrink: 0;
 }
 
@@ -109,7 +109,7 @@ body {
   text-transform: lowercase;
 }
 
-/* === App Grid (3 Columns) === */
+/* === App === */
 #app {
   flex: 1;
   display: flex;
@@ -117,137 +117,167 @@ body {
   width: 100%;
 }
 
-/* grid artık kullanılmıyor, tek panel */
-
-/* === Section Panel === */
-.panel {
+/* === Leaderboard (single unified table) === */
+.leaderboard {
   background: linear-gradient(
     180deg,
-    rgba(46, 28, 14, 0.82) 0%,
-    rgba(20, 10, 4, 0.9) 100%
+    rgba(46, 28, 14, 0.85) 0%,
+    rgba(20, 10, 4, 0.93) 100%
   );
-  border: 1px solid rgba(142, 90, 52, 0.3);
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 155, 119, 0.35);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow: hidden;
   width: 100%;
   flex: 1;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
-.panel-header {
-  padding: 12px 16px 8px;
-  border-bottom: 1px solid rgba(142, 90, 52, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.panel-header h2 {
+.board-title {
   font-family: 'Morganite', sans-serif;
-  font-weight: 800;
-  font-size: 2.2rem;
-  letter-spacing: 5px;
+  font-weight: 900;
+  font-size: 2.8rem;
+  letter-spacing: 8px;
+  text-align: center;
   text-transform: uppercase;
   color: #c69b77;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid rgba(198, 155, 119, 0.3);
   line-height: 1;
-  white-space: nowrap;
-}
-.panel-header .accent-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(198, 155, 119, 0.4), transparent);
+  flex-shrink: 0;
 }
 
-/* === Canlı Sıralama (center highlight) === */
-.live-panel {
-  border-color: rgba(198, 155, 119, 0.4);
+/* Grid columns: rank | team | s1-kill | s1-wwcd | f-kill | f-placement | total */
+.group-header,
+.col-header,
+.row {
+  display: grid;
+  grid-template-columns: 90px 1.6fr 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
 }
-.live-panel .panel-header {
-  border-bottom-color: rgba(198, 155, 119, 0.3);
+
+/* Group header row (1. AŞAMA spans 2, FİNAL MAÇI spans 2) */
+.group-header {
+  padding: 14px 0 10px;
+  background: rgba(142, 90, 52, 0.18);
+  border-bottom: 1px solid rgba(142, 90, 52, 0.3);
+  flex-shrink: 0;
+  min-height: 48px;
 }
-.live-panel .panel-header h2 {
+.gh-spacer {
+  grid-column: span 2;
+}
+.gh-spacer.end {
+  grid-column: span 1;
+}
+.gh-group {
+  grid-column: span 2;
+}
+.gh-group {
+  font-family: 'Morganite', sans-serif;
   font-weight: 900;
-  font-size: 2.4rem;
-  letter-spacing: 6px;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  color: #c69b77;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0.85;
+  height: 100%;
+  padding-top: 4px;
 }
 
-/* === Ranking List === */
-.ranking-list {
+/* Column header row */
+.col-header {
+  padding: 10px 0;
+  background: rgba(46, 28, 14, 0.6);
+  border-bottom: 2px solid rgba(198, 155, 119, 0.35);
+  flex-shrink: 0;
+}
+.col-header .cell {
+  font-family: 'Morganite', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  color: #c69b77;
+  text-transform: uppercase;
+  text-align: center;
+}
+.col-header .cell.rank,
+.col-header .cell.team {
+  text-align: center;
+}
+
+/* Rows list */
+.rows-list {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
-.rank-row {
-  display: grid;
-  grid-template-columns: 36px 1fr auto;
-  align-items: center;
-  padding: 0 16px;
+.row {
   flex: 1;
-  border-bottom: 2px solid rgba(142, 90, 52, 0.25);
+  padding: 0 0;
+  border-bottom: 1px solid rgba(142, 90, 52, 0.2);
   transition: background 0.2s ease;
 }
-.rank-row:last-child {
+.row:last-child {
   border-bottom: none;
 }
-.rank-row:hover {
-  background: rgba(198, 155, 119, 0.06);
+.row:hover {
+  background: rgba(198, 155, 119, 0.05);
 }
 
-.rank-number {
+/* Cell base */
+.cell {
+  font-family: 'Agency FB', sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: #ffffff;
+  text-align: center;
+  padding: 0 8px;
+}
+
+/* Rank cell — gold */
+.cell.rank {
   font-family: 'Morganite', sans-serif;
   font-weight: 900;
-  font-size: 1.7rem;
-  color: #8e5a34;
-  line-height: 1;
-}
-
-.team-name {
-  font-family: 'Agency FB', sans-serif;
-  font-weight: 900;
-  font-size: 1.05rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #ffffff;
-}
-
-.points {
-  font-family: 'Agency FB', sans-serif;
-  font-weight: 900;
-  font-size: 1.15rem;
+  font-size: 2rem;
+  color: #e8b36a;
+  text-align: center;
   letter-spacing: 1px;
-  text-align: right;
-  color: #ffffff;
 }
-.points span {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-left: 3px;
+
+/* Team name cell — left aligned */
+.cell.team {
+  text-align: left;
+  padding-left: 24px;
+  font-size: 1.3rem;
   letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
-/* === Live panel rows slightly larger === */
-.live-panel .rank-row {
-  grid-template-columns: 70px 1fr auto;
-  padding: 0 40px;
-}
-.live-panel .rank-number {
-  font-size: 2.8rem;
-}
-.live-panel .team-name {
-  font-size: 1.6rem;
-  letter-spacing: 3px;
-}
-.live-panel .points {
-  font-size: 1.7rem;
+/* Total cell — highlight */
+.cell.total {
+  color: #f0c88a;
+  font-size: 1.4rem;
 }
 
-/* === Top 3 — aynı renk === */
+/* Dikey ayırıcılar: 1.AŞAMA ile FİNAL arası, FİNAL ile TOPLAM arası */
+.col-header .cell:nth-child(4),
+.row .cell:nth-child(4),
+.col-header .cell:nth-child(6),
+.row .cell:nth-child(6) {
+  border-right: 3px solid rgba(198, 155, 119, 0.6);
+}
+.group-header .gh-group:not(:last-of-type) {
+  border-right: 3px solid rgba(198, 155, 119, 0.6);
+}
 
 /* === Loading / Error === */
 .loading {
@@ -278,27 +308,17 @@ body {
 
 /* === Responsive === */
 @media (max-width: 900px) {
-  .columns-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    overflow-y: auto;
+  html, body { overflow: auto; }
+  .container { height: auto; min-height: 100vh; padding: 16px; }
+  .board-title { font-size: 2rem; letter-spacing: 4px; }
+  .group-header, .col-header, .row {
+    grid-template-columns: 60px 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.9fr;
   }
-  .columns-grid .live-panel {
-    grid-column: 1;
-    grid-row: auto;
-  }
-  html, body {
-    overflow: auto;
-  }
-  .container {
-    height: auto;
-    min-height: 100vh;
-  }
-  .panel {
-    min-height: 400px;
-  }
-  .rank-row {
-    padding: 6px 12px;
-    flex: unset;
-  }
+  .group-header { grid-template-columns: 60px 1.2fr 1.6fr 1.6fr 0.9fr; }
+  .cell { font-size: 0.95rem; }
+  .cell.rank { font-size: 1.4rem; }
+  .cell.team { font-size: 1rem; padding-left: 10px; }
+  .gh-group { font-size: 1.1rem; }
+  .col-header .cell { font-size: 0.75rem; letter-spacing: 1.5px; }
+  .row { min-height: 44px; }
 }
