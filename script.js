@@ -37,14 +37,14 @@ function num(v) {
 }
 
 function extractData(rows) {
-  // 1. Aşama: Team(0), Total Kill(1), WWCD(2), Total(5)
+  // 1. Aşama: Team(0), Toplam Skor Puanı(3), WWCD Puanı(4), Total(5)
   const stage1 = {};
   for (let i = 1; i <= 10; i++) {
     const r = rows[i];
     if (!r || !r[0]) continue;
     stage1[r[0]] = {
-      kills: num(r[1]),
-      wwcd: num(r[2]),
+      skorPuani: num(r[3]),
+      wwcdPuani: num(r[4]),
       total: num(r[5])
     };
   }
@@ -94,8 +94,8 @@ function extractData(rows) {
       : (s1.total || 0) + (f.total || 0);
     teams.push({
       team: name,
-      s1Kills: s1.kills,
-      s1Wwcd: s1.wwcd,
+      s1Skor: s1.skorPuani || 0,
+      s1Wwcd: s1.wwcdPuani || 0,
       fKill: f.kill,
       fPlacement: f.placement,
       total
@@ -118,7 +118,7 @@ function tableRow(item, index) {
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>
       <div class="cell team">${item.team}</div>
-      <div class="cell">${item.s1Kills}</div>
+      <div class="cell">${item.s1Skor}</div>
       <div class="cell">${item.s1Wwcd}</div>
       <div class="cell">${item.fKill}</div>
       <div class="cell">${item.fPlacement}</div>
@@ -189,7 +189,7 @@ async function init() {
         render(extractData(parseCSV(text)));
       }
     } catch (e) {}
-  }, 10000);
+  }, 5000);
 }
 
 document.addEventListener('DOMContentLoaded', init);
