@@ -2,6 +2,7 @@ const SHEET_ID = '1mz19RnMb4vWJ5OegSxVjHj323Gv7dQdJULObm_sIsRk';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
 // Takım logoları — yeni takım eklendikçe buraya ekle
+// Değer string ise tek logo, dizi ise yan yana birden fazla logo gösterilir.
 const TEAM_LOGOS = {
   'BURUNLEY ESPOR': 'assets/teams/BURUNLEY.png',
   'KARA': 'assets/teams/KARA.png',
@@ -12,7 +13,12 @@ const TEAM_LOGOS = {
   'TEAM ROSE': 'assets/teams/TEAM_ROSE.png',
   'BARBAR': 'assets/teams/BARBAR.png',
   'ATABARI': 'assets/teams/ATABARI.png',
-  'GIRL POWER': 'assets/teams/GIRL_POWER.png',
+  'GIRL POWER': [
+    'assets/teams/girl_power/KATMAN71.png',
+    'assets/teams/girl_power/MAKARON.png',
+    'assets/teams/girl_power/NISA.png',
+    'assets/teams/girl_power/FIRESHINE.png',
+  ],
 };
 
 function parseCSV(text) {
@@ -130,9 +136,17 @@ function getTopClass(index) {
 function tableRow(item, index) {
   const logoSrc = TEAM_LOGOS[item.team.toUpperCase()] || TEAM_LOGOS[item.team];
   const teamSlug = item.team.replace(/\s+/g, '-').toUpperCase();
-  const logoHTML = logoSrc
-    ? `<span class="team-logo logo-${teamSlug}"><img src="${logoSrc}" alt=""></span>`
-    : `<div class="team-logo-placeholder"></div>`;
+  let logoHTML;
+  if (Array.isArray(logoSrc)) {
+    const circles = logoSrc.map(src =>
+      `<span class="team-logo team-logo-small"><img src="${src}" alt=""></span>`
+    ).join('');
+    logoHTML = `<span class="team-logo-group logo-${teamSlug}">${circles}</span>`;
+  } else if (logoSrc) {
+    logoHTML = `<span class="team-logo logo-${teamSlug}"><img src="${logoSrc}" alt=""></span>`;
+  } else {
+    logoHTML = `<div class="team-logo-placeholder"></div>`;
+  }
   return `
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>

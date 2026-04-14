@@ -298,10 +298,24 @@ body {
 .team-logo.logo-BARISG img {
   transform: translateX(-53%);
 }
-.team-logo.logo-GIRL-POWER img {
-  width: 110%;
-  top: 50%;
-  transform: translate(-54%, -50%);
+
+/* Çoklu üye logoları (ör. GIRL POWER) */
+.team-logo-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.team-logo.team-logo-small {
+  width: 38px;
+  height: 38px;
+  border-width: 1.5px;
+}
+.team-logo.team-logo-small img {
+  width: 115%;
+}
+.team-logo-group.logo-GIRL-POWER .team-logo-small:nth-child(1) img {
+  transform: translateX(-40%);
 }
 .team-logo-placeholder {
   width: 52px;
