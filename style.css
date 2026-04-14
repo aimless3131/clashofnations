@@ -253,13 +253,67 @@ body {
   letter-spacing: 1px;
 }
 
-/* Team name cell — left aligned */
+/* Team name cell — left aligned with logo */
 .cell.team {
   text-align: left;
-  padding-left: 24px;
+  padding-left: 16px;
   font-size: 1.3rem;
   letter-spacing: 2px;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.team-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(198, 155, 119, 0.5);
+  background: rgba(46, 28, 14, 0.6);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+}
+.team-logo img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 160%;
+  height: auto;
+  transform: translateX(-50%);
+  display: block;
+}
+
+/* Takım bazlı ince ayarlar */
+.team-logo.logo-TEAM-ROSE img {
+  transform: translateX(-46%);
+}
+.team-logo.logo-KNGL img {
+  transform: translateX(-54%);
+}
+.team-logo.logo-BURUNLEY-ESPOR img {
+  transform: translateX(-48%);
+}
+.team-logo.logo-BARISG img {
+  transform: translateX(-53%);
+}
+.team-logo.logo-GIRL-POWER img {
+  width: 110%;
+  top: 50%;
+  transform: translate(-54%, -50%);
+}
+.team-logo-placeholder {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+.team-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Total cell — highlight */

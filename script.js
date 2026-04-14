@@ -1,6 +1,20 @@
 const SHEET_ID = '1mz19RnMb4vWJ5OegSxVjHj323Gv7dQdJULObm_sIsRk';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
+// Takım logoları — yeni takım eklendikçe buraya ekle
+const TEAM_LOGOS = {
+  'BURUNLEY ESPOR': 'assets/teams/BURUNLEY.png',
+  'KARA': 'assets/teams/KARA.png',
+  'TEAM BRA': 'assets/teams/TEAM_BRA.png',
+  'BARISG': 'assets/teams/BARISG.png',
+  'KNGL': 'assets/teams/KNGL.png',
+  'KATMAN': 'assets/teams/KATMAN.png',
+  'TEAM ROSE': 'assets/teams/TEAM_ROSE.png',
+  'BARBAR': 'assets/teams/BARBAR.png',
+  'ATABARI': 'assets/teams/ATABARI.png',
+  'GIRL POWER': 'assets/teams/GIRL_POWER.png',
+};
+
 function parseCSV(text) {
   const rows = [];
   const lines = text.split('\n');
@@ -114,10 +128,15 @@ function getTopClass(index) {
 }
 
 function tableRow(item, index) {
+  const logoSrc = TEAM_LOGOS[item.team.toUpperCase()] || TEAM_LOGOS[item.team];
+  const teamSlug = item.team.replace(/\s+/g, '-').toUpperCase();
+  const logoHTML = logoSrc
+    ? `<span class="team-logo logo-${teamSlug}"><img src="${logoSrc}" alt=""></span>`
+    : `<div class="team-logo-placeholder"></div>`;
   return `
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>
-      <div class="cell team">${item.team}</div>
+      <div class="cell team">${logoHTML}<span class="team-text">${item.team}</span></div>
       <div class="cell">${item.s1Skor}</div>
       <div class="cell">${item.s1Wwcd}</div>
       <div class="cell">${item.fKill}</div>
