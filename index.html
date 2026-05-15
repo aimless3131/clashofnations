@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOTDROP - Turnuva Sıralaması</title>
+  <title>Clash of Nations — Tournament Leaderboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,13 +11,38 @@
   <div class="bg-overlay"></div>
 
   <div class="container">
-    <div class="page-title">
+    <aside class="side-panel">
       <img src="assets/hotdrop.png" alt="HOTDROP" class="logo-hotdrop">
-    </div>
 
-    <div id="app">
-      <div class="loading">Veriler yükleniyor</div>
-    </div>
+      <div class="side-divider"></div>
+
+      <div class="region-box" id="region-box">
+        <div class="region-heading">
+          <span class="region-heading-line"></span>
+          <span class="region-heading-text">REGIONS</span>
+          <span class="region-heading-line"></span>
+        </div>
+
+        <div class="region-leader" id="region-leader">
+          <div class="region-leader-rank">1ST</div>
+          <div class="region-leader-name">—</div>
+          <div class="region-leader-points">
+            <span class="rl-points">0</span>
+            <span class="rl-label">PTS</span>
+          </div>
+        </div>
+
+        <ul class="region-rest" id="region-rest">
+          <li class="region-row"><span class="region-rank">2ND</span><span class="region-name">—</span><span class="region-points">0</span></li>
+          <li class="region-row"><span class="region-rank">3RD</span><span class="region-name">—</span><span class="region-points">0</span></li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <main id="app">
+      <div class="loading">Loading data</div>
+    </main>
   </div>
 
   <script src="script.js"></script>

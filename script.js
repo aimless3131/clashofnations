@@ -1,5 +1,7 @@
-const SHEET_ID = '1mz19RnMb4vWJ5OegSxVjHj323Gv7dQdJULObm_sIsRk';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+const SHEET_ID = '101bdNW3KITcaYOmL8Qr7OWRQVq_2qB_mjXE5bktqbGU';
+const GID = '1323449178';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+const TEAM_COUNT = 15;
 
 // Takım logoları — yeni takım eklendikçe buraya ekle
 // Değer string ise tek logo, dizi ise yan yana birden fazla logo gösterilir.
@@ -56,74 +58,117 @@ function num(v) {
   return isNaN(n) ? 0 : n;
 }
 
+// Puan çarpanları — sheet'te adet tutuluyor, görüntüde puana çevrilir.
+//   SIRALAMA = B*100 + C*150 + D*50  + E*30   (WWCD / 2xWWCD / Top3 / Top4-10)
+//   SKOR     = F*20  + G*40  + H*80          (Each / +10 / +20 Elimination)
+const PTS = {
+  wwcd: 100,
+  wwcd2x: 150,
+  top3: 50,
+  top4_10: 30,
+  elim: 20,
+  elim10: 40,
+  elim20: 80
+};
+
+function readTeamRow(r) {
+  return {
+    team: r[0],
+    sira: num(r[1]) * PTS.wwcd
+        + num(r[2]) * PTS.wwcd2x
+        + num(r[3]) * PTS.top3
+        + num(r[4]) * PTS.top4_10,
+    skor: num(r[5]) * PTS.elim
+        + num(r[6]) * PTS.elim10
+        + num(r[7]) * PTS.elim20
+  };
+}
+
 function extractData(rows) {
-  // 1. Aşama: Team(0), Toplam Skor Puanı(3), WWCD Puanı(4), Total(5)
+  // Stage 1: satır 2..16 → CSV indeksleri 1..TEAM_COUNT
   const stage1 = {};
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= TEAM_COUNT; i++) {
     const r = rows[i];
     if (!r || !r[0]) continue;
-    stage1[r[0]] = {
-      skorPuani: num(r[3]),
-      wwcdPuani: num(r[4]),
-      total: num(r[5])
-    };
+    const t = readTeamRow(r);
+    stage1[t.team] = t;
   }
 
-  // Final: Team(0), Kill(3), Placement(4), Total(5)
-  let finalStart = -1;
-  for (let i = 0; i < rows.length; i++) {
-    if (rows[i][0] && rows[i][0].toLowerCase().includes('final')) {
-      finalStart = i + 2;
+  // Stage 2 başlangıcını bul: "Stage 2" yazan satır + 2 (başlık satırını da atla)
+  let stage2Start = -1;
+  for (let i = TEAM_COUNT + 1; i < rows.length; i++) {
+    if (rows[i][0] && rows[i][0].toLowerCase().includes('stage 2')) {
+      stage2Start = i + 2;
       break;
     }
   }
-  const final = {};
-  if (finalStart > 0) {
-    for (let i = finalStart; i < finalStart + 10 && i < rows.length; i++) {
+  const stage2 = {};
+  if (stage2Start > 0) {
+    for (let i = stage2Start; i < stage2Start + TEAM_COUNT && i < rows.length; i++) {
       const r = rows[i];
       if (!r || !r[0]) continue;
-      final[r[0]] = {
-        kill: num(r[3]),
-        placement: num(r[4]),
-        total: num(r[5])
-      };
+      const t = readTeamRow(r);
+      stage2[t.team] = t;
     }
   }
 
-  // Canlı sıralama (total points): Team(7), Total(8)
-  const liveMap = {};
-  for (let i = 1; i <= 10; i++) {
+  // Sağdaki "Leaderboard Team" (M, idx 12) / "Total Points" (N, idx 13) — varsa onu kullan
+  const totalMap = {};
+  for (let i = 1; i <= TEAM_COUNT; i++) {
     const r = rows[i];
-    if (!r || !r[7]) continue;
-    liveMap[r[7]] = num(r[8]);
+    if (!r || !r[12]) continue;
+    totalMap[r[12]] = num(r[13]);
   }
 
-  // Merge into single rows per team, sorted by total
-  const teams = [];
   const teamNames = new Set([
     ...Object.keys(stage1),
-    ...Object.keys(final),
-    ...Object.keys(liveMap)
+    ...Object.keys(stage2),
+    ...Object.keys(totalMap)
   ]);
 
+  const teams = [];
   teamNames.forEach(name => {
-    const s1 = stage1[name] || { kills: 0, wwcd: 0 };
-    const f = final[name] || { kill: 0, placement: 0 };
-    const total = liveMap[name] !== undefined
-      ? liveMap[name]
-      : (s1.total || 0) + (f.total || 0);
+    const s1 = stage1[name] || { skor: 0, sira: 0 };
+    const s2 = stage2[name] || { skor: 0, sira: 0 };
+    const total = totalMap[name] !== undefined
+      ? totalMap[name]
+      : s1.skor + s1.sira + s2.skor + s2.sira;
     teams.push({
       team: name,
-      s1Skor: s1.skorPuani || 0,
-      s1Wwcd: s1.wwcdPuani || 0,
-      fKill: f.kill,
-      fPlacement: f.placement,
+      s1Skor: s1.skor,
+      s1Sira: s1.sira,
+      s2Skor: s2.skor,
+      s2Sira: s2.sira,
       total
     });
   });
 
   teams.sort((a, b) => b.total - a.total);
   return teams;
+}
+
+// M (idx 12) kolonunda "TURKEY REGION / WEU REGION / CIS REGION" etiketlerini ara,
+// N (idx 13) kolonundan puanı oku. Satır kayarsa kırılmaması için tüm CSV'yi tarar.
+function extractRegions(rows) {
+  const wanted = {
+    'TURKEY REGION': 'TÜRKİYE',
+    'WEU REGION': 'WEU',
+    'CIS REGION': 'CIS'
+  };
+  const found = {};
+  for (const r of rows) {
+    if (!r) continue;
+    const label = (r[12] || '').toUpperCase();
+    if (wanted[label] !== undefined && found[label] === undefined) {
+      found[label] = num(r[13]);
+    }
+  }
+  const list = Object.keys(wanted).map(key => ({
+    name: wanted[key],
+    points: found[key] || 0
+  }));
+  list.sort((a, b) => b.points - a.points);
+  return list;
 }
 
 function getTopClass(index) {
@@ -134,55 +179,61 @@ function getTopClass(index) {
 }
 
 function tableRow(item, index) {
-  const logoSrc = TEAM_LOGOS[item.team.toUpperCase()] || TEAM_LOGOS[item.team];
-  const teamSlug = item.team.replace(/\s+/g, '-').toUpperCase();
-  let logoHTML;
-  if (Array.isArray(logoSrc)) {
-    const circles = logoSrc.map(src =>
-      `<span class="team-logo team-logo-small"><img src="${src}" alt=""></span>`
-    ).join('');
-    logoHTML = `<span class="team-logo-group logo-${teamSlug}">${circles}</span>`;
-  } else if (logoSrc) {
-    logoHTML = `<span class="team-logo logo-${teamSlug}"><img src="${logoSrc}" alt=""></span>`;
-  } else {
-    logoHTML = `<div class="team-logo-placeholder"></div>`;
-  }
   return `
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>
-      <div class="cell team">${logoHTML}<span class="team-text">${item.team}</span></div>
+      <div class="cell team"><span class="team-text">${item.team}</span></div>
       <div class="cell">${item.s1Skor}</div>
-      <div class="cell">${item.s1Wwcd}</div>
-      <div class="cell">${item.fKill}</div>
-      <div class="cell">${item.fPlacement}</div>
+      <div class="cell">${item.s1Sira}</div>
+      <div class="cell">${item.s2Skor}</div>
+      <div class="cell">${item.s2Sira}</div>
       <div class="cell total">${item.total}</div>
     </div>
   `;
 }
 
-function render(teams) {
+function renderRegions(regions) {
+  const leader = document.getElementById('region-leader');
+  const rest = document.getElementById('region-rest');
+  if (!leader || !rest) return;
+  if (!regions.length) return;
+
+  const [first, ...others] = regions;
+  leader.querySelector('.region-leader-name').textContent = first.name;
+  leader.querySelector('.rl-points').textContent = first.points;
+
+  const ordinals = ['2ND', '3RD'];
+  rest.innerHTML = others.map((r, i) => `
+    <li class="region-row">
+      <span class="region-rank">${ordinals[i] || `${i + 2}TH`}</span>
+      <span class="region-name">${r.name}</span>
+      <span class="region-points">${r.points}</span>
+    </li>
+  `).join('');
+}
+
+function render(teams, regions) {
   const app = document.getElementById('app');
   const rows = teams.map(tableRow).join('');
+  renderRegions(regions || []);
 
   app.innerHTML = `
     <div class="leaderboard">
-      <div class="board-title">ANTİK GİZEM YÜKSELİŞ</div>
-
       <div class="group-header">
         <div class="gh-spacer"></div>
-        <div class="gh-group">1. AŞAMA</div>
-        <div class="gh-group">ŞOV MAÇI</div>
+        <div class="gh-group">STAGE 1</div>
+        <div class="gh-group">STAGE 2</div>
         <div class="gh-spacer end"></div>
       </div>
 
       <div class="col-header">
-        <div class="cell rank">SIRA</div>
-        <div class="cell team">TAKIM</div>
-        <div class="cell">TOTAL SKOR</div>
-        <div class="cell">WWCD</div>
-        <div class="cell">SKOR</div>
-        <div class="cell">SIRALAMA</div>
-        <div class="cell total">TOPLAM</div>
+        <div class="cell rank">RANK</div>
+        <div class="cell team">TEAM</div>
+        <div class="cell">KILLS</div>
+        <div class="cell">PLACEMENT</div>
+        <div class="cell">KILLS</div>
+        <div class="cell">PLACEMENT</div>
+        <div class="cell total">TOTAL</div>
       </div>
 
       <div class="rows-list">
@@ -190,6 +241,7 @@ function render(teams) {
       </div>
     </div>
   `;
+
 }
 
 let lastCSV = '';
@@ -207,11 +259,11 @@ async function init() {
   try {
     const text = await fetchData();
     lastCSV = text;
-    const teams = extractData(parseCSV(text));
-    render(teams);
+    const parsed = parseCSV(text);
+    render(extractData(parsed), extractRegions(parsed));
   } catch (err) {
-    console.error('Veri yüklenirken hata:', err);
-    app.innerHTML = `<div class="error">Veri yüklenemedi. Sayfayı yenileyin.<br><small>${err.message}</small></div>`;
+    console.error('Error loading data:', err);
+    app.innerHTML = `<div class="error">Failed to load data. Please refresh the page.<br><small>${err.message}</small></div>`;
   }
 
   setInterval(async () => {
@@ -219,7 +271,8 @@ async function init() {
       const text = await fetchData();
       if (text !== lastCSV) {
         lastCSV = text;
-        render(extractData(parseCSV(text)));
+        const parsed = parseCSV(text);
+        render(extractData(parsed), extractRegions(parsed));
       }
     } catch (e) {}
   }, 5000);

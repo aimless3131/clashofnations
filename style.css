@@ -1,23 +1,9 @@
 /* === Font Faces === */
 @font-face {
-  font-family: 'Morganite';
-  src: url('assets/fonts/MORGANITE-SEMIBOLD.TTF') format('truetype');
-  font-weight: 600;
-}
-@font-face {
-  font-family: 'Morganite';
-  src: url('assets/fonts/MORGANITE-BOLD.TTF') format('truetype');
-  font-weight: 700;
-}
-@font-face {
-  font-family: 'Morganite';
-  src: url('assets/fonts/MORGANITE-EXTRABOLD.TTF') format('truetype');
-  font-weight: 800;
-}
-@font-face {
-  font-family: 'Morganite';
-  src: url('assets/fonts/MORGANITE-BLACK.TTF') format('truetype');
-  font-weight: 900;
+  font-family: 'League Gothic';
+  src: url('assets/fonts/LeagueGothic-VF.ttf') format('truetype-variations');
+  font-weight: 400 900;
+  font-stretch: 50% 100%;
 }
 @font-face {
   font-family: 'Agency FB';
@@ -29,6 +15,13 @@
   src: url('assets/fonts/UFONTS.COM_AGENCYFB-BLACK.TTF') format('truetype');
   font-weight: 900;
 }
+
+/* === Palette ===
+   --blue:   #1C42CD
+   --black:  #1A1A1A
+   --gold:   #FFBB58
+   --peach:  #FFD690
+*/
 
 /* === Reset & Base === */
 *, *::before, *::after {
@@ -43,8 +36,8 @@ html, body {
 }
 
 body {
-  background: #0a0604;
-  color: #c69b77;
+  background: #1A1A1A;
+  color: #ffffff;
   font-family: 'Agency FB', 'Segoe UI', sans-serif;
 }
 
@@ -61,111 +54,380 @@ body {
   z-index: 1;
   background: linear-gradient(
     180deg,
-    rgba(10, 6, 4, 0.78) 0%,
-    rgba(10, 6, 4, 0.9) 40%,
-    rgba(10, 6, 4, 0.96) 100%
+    rgba(10, 10, 10, 0.78) 0%,
+    rgba(10, 10, 10, 0.9) 40%,
+    rgba(10, 10, 10, 0.96) 100%
   );
 }
 
-/* === Main Container === */
+/* === Main Container — left panel + right table === */
 .container {
   position: relative;
   z-index: 2;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 40px 24px;
-  max-width: 1500px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  padding: 28px 36px;
+  max-width: 1700px;
   margin: 0 auto;
 }
 
-/* === Page Title / Logos === */
-.page-title {
+/* === Side Panel === */
+.side-panel {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding-bottom: 18px;
-  flex-shrink: 0;
+  text-align: center;
+  padding: 28px 22px;
+  background: linear-gradient(
+    180deg,
+    rgba(28, 66, 205, 0.18) 0%,
+    rgba(26, 26, 26, 0.92) 100%
+  );
+  border: 1px solid rgba(255, 187, 88, 0.35);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .logo-hotdrop {
-  height: 75px;
+  height: 180px;
+  width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
 }
 
-.logo-severnik {
-  height: 45px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+.side-title {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.9;
+}
+.side-title-1 {
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+}
+.side-title-2 {
+  font-size: 2.6rem;
+  letter-spacing: 6px;
+  color: #FFBB58;
+  margin-top: 4px;
 }
 
-.logo-x {
-  font-family: 'Morganite', sans-serif;
-  font-weight: 800;
-  font-size: 1.6rem;
-  color: #8e5a34;
-  text-transform: lowercase;
+.side-divider {
+  width: 70%;
+  height: 1px;
+  margin: 22px 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 187, 88, 0.55) 50%,
+    transparent 100%
+  );
+  flex-shrink: 0;
 }
 
-/* === App === */
-#app {
+/* === Region Box (Country Leaderboard) === */
+.region-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+}
+
+/* Section heading with side rules */
+.region-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.region-heading-line {
   flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 187, 88, 0.55) 100%
+  );
+}
+.region-heading-line:last-child {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 187, 88, 0.55) 0%,
+    transparent 100%
+  );
+}
+.region-heading-text {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 5px;
+  color: #FFBB58;
+  text-transform: uppercase;
+}
+
+/* Hero leader card */
+.region-leader {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 14px 18px;
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at top, rgba(255, 187, 88, 0.28) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(28, 66, 205, 0.22) 0%, rgba(26, 26, 26, 0.92) 100%);
+  border: 1px solid rgba(255, 187, 88, 0.55);
+  box-shadow:
+    0 0 22px rgba(255, 187, 88, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.region-leader::before,
+.region-leader::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  width: 60%;
+  height: 180%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 187, 88, 0.08) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.region-leader::before { left: -30%; transform: rotate(8deg); }
+.region-leader::after  { right: -30%; transform: rotate(-8deg); }
+
+.region-leader-rank {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: #FFBB58;
+  line-height: 1;
+  margin-bottom: 4px;
+  text-shadow: 0 0 14px rgba(255, 187, 88, 0.5);
+  position: relative;
+  z-index: 1;
+}
+.region-leader-name {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.9rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 0.95;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  position: relative;
+  z-index: 1;
+}
+.region-leader-points {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+}
+.region-leader-points .rl-points {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 2.4rem;
+  color: #FFD690;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(255, 214, 144, 0.45);
+}
+.region-leader-points .rl-label {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+/* Card-style rows for 2nd / 3rd */
+.region-rest {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+.region-rest .region-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.region-rest .region-rank {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--tier-text);
+  text-shadow: 0 0 10px var(--tier-glow);
+  position: relative;
+  z-index: 2;
+}
+.region-rest .region-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--tier-edge) 0%, transparent 60%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 2nd — peach/light gold tier */
+.region-rest .region-row:first-child {
+  --tier-edge: rgba(255, 214, 144, 0.85);
+  --tier-glow: rgba(255, 214, 144, 0.18);
+  --tier-text: #FFD690;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(255, 214, 144, 0.22) 0%, transparent 55%),
+    linear-gradient(95deg, rgba(255, 214, 144, 0.08) 0%, rgba(26, 26, 26, 0.7) 70%);
+  box-shadow: 0 0 16px var(--tier-glow), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* 3rd — cool silver / steel tier */
+.region-rest .region-row:last-child {
+  --tier-edge: rgba(200, 215, 235, 0.85);
+  --tier-glow: rgba(180, 200, 225, 0.22);
+  --tier-text: #D8DEE9;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(200, 215, 235, 0.22) 0%, transparent 55%),
+    linear-gradient(95deg, rgba(180, 200, 225, 0.08) 0%, rgba(26, 26, 26, 0.7) 70%);
+  box-shadow: 0 0 14px var(--tier-glow), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.region-rest .region-name {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.region-rest .region-points {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.55rem;
+  color: var(--tier-text);
+  line-height: 1;
+  text-shadow: 0 0 10px var(--tier-glow);
+  text-align: right;
+  position: relative;
+  z-index: 2;
+}
+
+/* === Live Indicator === */
+.live-indicator {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border: 1px solid rgba(28, 66, 205, 0.6);
+  background: rgba(28, 66, 205, 0.15);
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.live-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FFBB58;
+  box-shadow: 0 0 8px rgba(255, 187, 88, 0.9);
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+.live-text {
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* === App / Right Side === */
+#app {
   display: flex;
   min-height: 0;
   width: 100%;
 }
 
-/* === Leaderboard (single unified table) === */
+/* === Leaderboard === */
 .leaderboard {
   background: linear-gradient(
     180deg,
-    rgba(46, 28, 14, 0.85) 0%,
-    rgba(20, 10, 4, 0.93) 100%
+    rgba(26, 26, 26, 0.85) 0%,
+    rgba(10, 10, 10, 0.94) 100%
   );
-  border: 1px solid rgba(198, 155, 119, 0.35);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 187, 88, 0.4);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
   display: flex;
   flex-direction: column;
   min-height: 0;
   width: 100%;
   flex: 1;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
-.board-title {
-  font-family: 'Morganite', sans-serif;
-  font-weight: 900;
-  font-size: 2.8rem;
-  letter-spacing: 8px;
-  text-align: center;
-  text-transform: uppercase;
-  color: #c69b77;
-  padding: 14px 20px 10px;
-  border-bottom: 1px solid rgba(198, 155, 119, 0.3);
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-/* Grid columns: rank | team | s1-kill | s1-wwcd | f-kill | f-placement | total */
+/* Grid columns: rank | team | s1-skor | s1-wwcd | f-skor | f-sira | toplam */
 .group-header,
 .col-header,
 .row {
   display: grid;
-  grid-template-columns: 90px 1.6fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 80px 1.6fr 1fr 1fr 1fr 1fr 1.1fr;
   align-items: center;
 }
 
-/* Group header row (1. AŞAMA spans 2, FİNAL MAÇI spans 2) */
+/* Group header (1. AŞAMA + ŞOV MAÇI labels) */
 .group-header {
   padding: 14px 0 10px;
-  background: rgba(142, 90, 52, 0.18);
-  border-bottom: 1px solid rgba(142, 90, 52, 0.3);
+  background: rgba(28, 66, 205, 0.25);
+  border-bottom: 1px solid rgba(28, 66, 205, 0.45);
   flex-shrink: 0;
-  min-height: 48px;
+  min-height: 52px;
 }
 .gh-spacer {
   grid-column: span 2;
@@ -175,13 +437,11 @@ body {
 }
 .gh-group {
   grid-column: span 2;
-}
-.gh-group {
-  font-family: 'Morganite', sans-serif;
+  font-family: 'League Gothic', sans-serif;
   font-weight: 900;
   font-size: 1.5rem;
   letter-spacing: 4px;
-  color: #c69b77;
+  color: #ffffff;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -191,24 +451,20 @@ body {
   padding-top: 4px;
 }
 
-/* Column header row */
+/* Column header */
 .col-header {
-  padding: 10px 0;
-  background: rgba(46, 28, 14, 0.6);
-  border-bottom: 2px solid rgba(198, 155, 119, 0.35);
+  padding: 12px 0;
+  background: rgba(26, 26, 26, 0.7);
+  border-bottom: 2px solid rgba(255, 187, 88, 0.5);
   flex-shrink: 0;
 }
 .col-header .cell {
-  font-family: 'Morganite', sans-serif;
+  font-family: 'League Gothic', sans-serif;
   font-weight: 900;
   font-size: 1.5rem;
   letter-spacing: 3px;
-  color: #c69b77;
+  color: #ffffff;
   text-transform: uppercase;
-  text-align: center;
-}
-.col-header .cell.rank,
-.col-header .cell.team {
   text-align: center;
 }
 
@@ -222,15 +478,39 @@ body {
 
 .row {
   flex: 1;
-  padding: 0 0;
-  border-bottom: 1px solid rgba(142, 90, 52, 0.2);
+  padding: 0;
+  border-bottom: 1px solid rgba(28, 66, 205, 0.28);
   transition: background 0.2s ease;
 }
 .row:last-child {
   border-bottom: none;
 }
 .row:hover {
-  background: rgba(198, 155, 119, 0.05);
+  background: rgba(255, 187, 88, 0.06);
+}
+
+/* Top-3 row accents */
+.row.top-1 {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 187, 88, 0.18) 0%,
+    rgba(255, 187, 88, 0.04) 60%,
+    transparent 100%
+  );
+}
+.row.top-2 {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 214, 144, 0.12) 0%,
+    transparent 80%
+  );
+}
+.row.top-3 {
+  background: linear-gradient(
+    90deg,
+    rgba(28, 66, 205, 0.18) 0%,
+    transparent 80%
+  );
 }
 
 /* Cell base */
@@ -243,33 +523,35 @@ body {
   padding: 0 8px;
 }
 
-/* Rank cell — gold */
+/* Rank cell */
 .cell.rank {
-  font-family: 'Morganite', sans-serif;
+  font-family: 'Agency FB', sans-serif;
   font-weight: 900;
-  font-size: 2rem;
-  color: #e8b36a;
+  font-size: 1.4rem;
+  color: #ffffff;
   text-align: center;
   letter-spacing: 1px;
 }
+.row.top-1 .cell.rank { color: #FFBB58; }
+.row.top-2 .cell.rank { color: #FFD690; }
+.row.top-3 .cell.rank { color: #ffffff; }
 
-/* Team name cell — left aligned with logo */
+/* Team cell */
 .cell.team {
   text-align: left;
-  padding-left: 16px;
+  padding-left: 18px;
   font-size: 1.3rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 14px;
 }
 .team-logo {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 2px solid rgba(198, 155, 119, 0.5);
-  background: rgba(46, 28, 14, 0.6);
+  border: 2px solid rgba(255, 187, 88, 0.55);
+  background: rgba(26, 26, 26, 0.65);
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
@@ -284,22 +566,18 @@ body {
   transform: translateX(-50%);
   display: block;
 }
-
-/* Takım bazlı ince ayarlar */
-.team-logo.logo-TEAM-ROSE img {
-  transform: translateX(-46%);
-}
-.team-logo.logo-KNGL img {
-  transform: translateX(-54%);
-}
-.team-logo.logo-BURUNLEY-ESPOR img {
-  transform: translateX(-48%);
-}
-.team-logo.logo-BARISG img {
-  transform: translateX(-53%);
+.row.top-1 .team-logo {
+  border-color: #FFBB58;
+  box-shadow: 0 0 14px rgba(255, 187, 88, 0.45);
 }
 
-/* Çoklu üye logoları (ör. GIRL POWER) */
+/* Per-team logo tweaks */
+.team-logo.logo-TEAM-ROSE img { transform: translateX(-46%); }
+.team-logo.logo-KNGL img { transform: translateX(-54%); }
+.team-logo.logo-BURUNLEY-ESPOR img { transform: translateX(-48%); }
+.team-logo.logo-BARISG img { transform: translateX(-53%); }
+
+/* Multi-member logos (GIRL POWER) */
 .team-logo-group {
   display: inline-flex;
   align-items: center;
@@ -330,21 +608,22 @@ body {
   white-space: nowrap;
 }
 
-/* Total cell — highlight */
+/* Total cell */
 .cell.total {
-  color: #f0c88a;
-  font-size: 1.4rem;
+  color: #FFD690;
+  font-size: 1.5rem;
 }
+.row.top-1 .cell.total { color: #FFBB58; }
 
-/* Dikey ayırıcılar: 1.AŞAMA ile FİNAL arası, FİNAL ile TOPLAM arası */
+/* Vertical dividers between groups */
 .col-header .cell:nth-child(4),
 .row .cell:nth-child(4),
 .col-header .cell:nth-child(6),
 .row .cell:nth-child(6) {
-  border-right: 3px solid rgba(198, 155, 119, 0.6);
+  border-right: 3px solid rgba(28, 66, 205, 0.65);
 }
 .group-header .gh-group:not(:last-of-type) {
-  border-right: 3px solid rgba(198, 155, 119, 0.6);
+  border-right: 3px solid rgba(28, 66, 205, 0.65);
 }
 
 /* === Loading / Error === */
@@ -358,15 +637,14 @@ body {
   font-size: 1.3rem;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #8e5a34;
+  color: #ffffff;
 }
-
 .error {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: #c0605a;
+  color: #ff7a7a;
   font-family: 'Agency FB', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
@@ -375,14 +653,31 @@ body {
 }
 
 /* === Responsive === */
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 260px 1fr;
+    gap: 16px;
+    padding: 20px;
+  }
+  .logo-hotdrop { height: 140px; }
+  .region-leader-name { font-size: 1.7rem; letter-spacing: 3px; }
+  .region-leader-points .rl-points { font-size: 2.2rem; }
+  .region-rest .region-name { font-size: 1.2rem; letter-spacing: 2px; }
+  .region-rest .region-points { font-size: 1.3rem; }
+}
+
 @media (max-width: 900px) {
   html, body { overflow: auto; }
-  .container { height: auto; min-height: 100vh; padding: 16px; }
-  .board-title { font-size: 2rem; letter-spacing: 4px; }
-  .group-header, .col-header, .row {
-    grid-template-columns: 60px 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.9fr;
+  .container {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    padding: 16px;
   }
-  .group-header { grid-template-columns: 60px 1.2fr 1.6fr 1.6fr 0.9fr; }
+  .side-panel { padding: 18px; }
+  .group-header, .col-header, .row {
+    grid-template-columns: 56px 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.9fr;
+  }
   .cell { font-size: 0.95rem; }
   .cell.rank { font-size: 1.4rem; }
   .cell.team { font-size: 1rem; padding-left: 10px; }
