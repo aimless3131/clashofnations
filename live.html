@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clash of Nations Live JSON</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #101010;
+      color: #f7f7f7;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(16, 16, 16, 0.94);
+      border-bottom: 1px solid rgba(255, 187, 88, 0.35);
+      backdrop-filter: blur(12px);
+    }
+    h1 {
+      margin: 0;
+      color: #ffbb58;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+    }
+    .status {
+      color: #d7d7d7;
+      font-size: 0.8rem;
+      text-align: right;
+    }
+    pre {
+      margin: 0;
+      padding: 18px;
+      overflow: auto;
+      color: #f7f7f7;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      white-space: pre;
+    }
+    .error {
+      color: #ff7a7a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Clash of Nations Live JSON</h1>
+    <div class="status" id="status">Loading</div>
+  </header>
+  <pre id="json-output">{}</pre>
+  <script src="live.js?v=1"></script>
+</body>
+</html>

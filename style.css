@@ -134,6 +134,22 @@ body {
   color: #1A1A1A;
   box-shadow: 0 0 14px rgba(255, 187, 88, 0.3);
 }
+.json-link {
+  margin-top: 10px;
+  color: #FFD690;
+  font-family: 'League Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 214, 144, 0.45);
+  flex-shrink: 0;
+}
+.json-link:hover {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
 
 .side-title {
   font-family: 'League Gothic', sans-serif;
