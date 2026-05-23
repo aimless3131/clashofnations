@@ -179,10 +179,35 @@ function extractRegions(rows) {
     .map((region, index) => ({ rank: index + 1, ...region }));
 }
 
+function buildRegionTotals(regions) {
+  const totals = {
+    turkey: 0,
+    weu: 0,
+    cis: 0
+  };
+
+  regions.forEach(region => {
+    if (region.key === 'TURKEY REGION') totals.turkey = region.points;
+    if (region.key === 'WEU REGION') totals.weu = region.points;
+    if (region.key === 'CIS REGION') totals.cis = region.points;
+  });
+
+  return totals;
+}
+
+function buildRegionsByKey(regions) {
+  return regions.reduce((acc, region) => {
+    acc[region.key] = region;
+    return acc;
+  }, {});
+}
+
 async function buildLivePayload() {
   const res = await fetch(`${CSV_URL}&_t=${Date.now()}`);
   if (!res.ok) throw new Error(`Google Sheet HTTP ${res.status}`);
   const rows = parseCSV(await res.text());
+  const teams = extractTeams(rows);
+  const regions = extractRegions(rows);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -194,8 +219,10 @@ async function buildLivePayload() {
       csvUrl: CSV_URL
     },
     scoring: PTS,
-    teams: extractTeams(rows),
-    regions: extractRegions(rows)
+    teams,
+    regions,
+    regionTotals: buildRegionTotals(regions),
+    regionsByKey: buildRegionsByKey(regions)
   };
 }
 
