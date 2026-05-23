@@ -16,7 +16,7 @@
   };
 
   const REGION_NAMES = {
-    'TURKEY REGION': { en: 'TURKEY', tr: 'TÜRKİYE' },
+    'TURKEY REGION': { en: 'TÜRKİYE', tr: 'TÜRKİYE' },
     'WEU REGION': { en: 'WEU', tr: 'WEU' },
     'CIS REGION': { en: 'CIS', tr: 'CIS' }
   };

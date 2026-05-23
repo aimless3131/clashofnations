@@ -18,8 +18,9 @@ const COPY = {
     pts: 'PTS',
     loading: 'Loading data',
     error: 'Failed to load data. Please refresh the page.',
+    regionRanks: ['1ST', '2ND', '3RD'],
     regionsMap: {
-      'TURKEY REGION': 'TURKEY',
+      'TURKEY REGION': 'TÜRKİYE',
       'WEU REGION': 'WEU',
       'CIS REGION': 'CIS'
     }
@@ -37,6 +38,7 @@ const COPY = {
     pts: 'PUAN',
     loading: 'Veriler yükleniyor',
     error: 'Veriler yüklenemedi. Lütfen sayfayı yenile.',
+    regionRanks: ['1.', '2.', '3.'],
     regionsMap: {
       'TURKEY REGION': 'TÜRKİYE',
       'WEU REGION': 'WEU',
@@ -116,6 +118,10 @@ function escapeHTML(value) {
     '"': '&quot;',
     "'": '&#39;'
   }[ch]));
+}
+
+function formatTeamName(name) {
+  return String(name).toLocaleUpperCase('en-US');
 }
 
 // Puan çarpanları — sheet'te adet tutuluyor, görüntüde puana çevrilir.
@@ -238,7 +244,7 @@ function tableRow(item, index) {
   return `
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>
-      <div class="cell team"><span class="team-text">${escapeHTML(item.team)}</span></div>
+      <div class="cell team"><span class="team-text">${escapeHTML(formatTeamName(item.team))}</span></div>
       <div class="cell">${item.s1Skor}</div>
       <div class="cell">${item.s1Sira}</div>
       <div class="cell">${item.s2Skor}</div>
@@ -255,14 +261,15 @@ function renderRegions(regions) {
   if (!regions.length) return;
 
   const [first, ...others] = regions;
+  const regionRanks = t('regionRanks');
+  leader.querySelector('.region-leader-rank').textContent = regionRanks[0];
   leader.querySelector('.region-leader-name').textContent = t('regionsMap')[first.key] || first.key;
   leader.querySelector('.rl-points').textContent = first.points;
   leader.querySelector('.rl-label').textContent = t('pts');
 
-  const ordinals = ['2ND', '3RD'];
   rest.innerHTML = others.map((r, i) => `
     <li class="region-row">
-      <span class="region-rank">${ordinals[i] || `${i + 2}TH`}</span>
+      <span class="region-rank">${regionRanks[i + 1] || `${i + 2}.`}</span>
       <span class="region-name">${t('regionsMap')[r.key] || r.key}</span>
       <span class="region-points">${r.points}</span>
     </li>
