@@ -202,6 +202,27 @@ function buildRegionsByKey(regions) {
   }, {});
 }
 
+function buildVmixRegions(regions) {
+  return regions.map(region => ({
+    rank: region.rank,
+    key: region.key,
+    name: region.name.en,
+    name_en: region.name.en,
+    name_tr: region.name.tr,
+    points: region.points
+  }));
+}
+
+function buildVmixRegionTotals(regions) {
+  const totals = buildRegionTotals(regions);
+  return [{
+    turkiye: totals.turkey,
+    turkey: totals.turkey,
+    weu: totals.weu,
+    cis: totals.cis
+  }];
+}
+
 async function buildLivePayload() {
   const res = await fetch(`${CSV_URL}&_t=${Date.now()}`);
   if (!res.ok) throw new Error(`Google Sheet HTTP ${res.status}`);
@@ -284,10 +305,31 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/regions.json' || pathname === '/api/regions.json') {
+    try {
+      const payload = await buildLivePayload();
+      send(res, 200, JSON.stringify(buildVmixRegions(payload.regions), null, 2), 'application/json; charset=utf-8');
+    } catch (err) {
+      send(res, 502, JSON.stringify([{ error: err.message }], null, 2), 'application/json; charset=utf-8');
+    }
+    return;
+  }
+
+  if (pathname === '/region-totals.json' || pathname === '/api/region-totals.json') {
+    try {
+      const payload = await buildLivePayload();
+      send(res, 200, JSON.stringify(buildVmixRegionTotals(payload.regions), null, 2), 'application/json; charset=utf-8');
+    } catch (err) {
+      send(res, 502, JSON.stringify([{ error: err.message }], null, 2), 'application/json; charset=utf-8');
+    }
+    return;
+  }
+
   serveStatic(req, res, pathname);
 });
 
 server.listen(PORT, () => {
   console.log(`Clash of Nations server running at http://localhost:${PORT}`);
   console.log(`Live JSON endpoint: http://localhost:${PORT}/live.json`);
+  console.log(`vMix regions endpoint: http://localhost:${PORT}/regions.json`);
 });
