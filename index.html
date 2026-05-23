@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clash of Nations — Tournament Leaderboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div class="bg-layer"></div>
@@ -14,12 +14,17 @@
     <aside class="side-panel">
       <img src="assets/hotdrop.png" alt="HOTDROP" class="logo-hotdrop">
 
+      <div class="language-switch" aria-label="Language selector">
+        <button type="button" class="lang-button is-active" data-lang="en">EN</button>
+        <button type="button" class="lang-button" data-lang="tr">TR</button>
+      </div>
+
       <div class="side-divider"></div>
 
       <div class="region-box" id="region-box">
         <div class="region-heading">
           <span class="region-heading-line"></span>
-          <span class="region-heading-text">REGIONS</span>
+          <span class="region-heading-text" data-i18n="regions">REGIONS</span>
           <span class="region-heading-line"></span>
         </div>
 
@@ -45,6 +50,6 @@
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>

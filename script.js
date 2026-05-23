@@ -2,6 +2,56 @@ const SHEET_ID = '101bdNW3KITcaYOmL8Qr7OWRQVq_2qB_mjXE5bktqbGU';
 const GID = '1323449178';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
 const TEAM_COUNT = 15;
+const LANG_KEY = 'clashOfNationsLanguage';
+
+const COPY = {
+  en: {
+    title: 'Clash of Nations — Tournament Leaderboard',
+    regions: 'REGIONS',
+    stage1: 'STAGE 1',
+    stage2: 'STAGE 2',
+    rank: 'RANK',
+    team: 'TEAM',
+    kills: 'KILLS',
+    placement: 'PLACEMENT',
+    total: 'TOTAL',
+    pts: 'PTS',
+    loading: 'Loading data',
+    error: 'Failed to load data. Please refresh the page.',
+    regionsMap: {
+      'TURKEY REGION': 'TURKEY',
+      'WEU REGION': 'WEU',
+      'CIS REGION': 'CIS'
+    }
+  },
+  tr: {
+    title: 'Clash of Nations — Turnuva Sıralaması',
+    regions: 'BÖLGELER',
+    stage1: '1. AŞAMA',
+    stage2: '2. AŞAMA',
+    rank: 'SIRA',
+    team: 'TAKIM',
+    kills: 'SKOR',
+    placement: 'SIRALAMA',
+    total: 'TOPLAM',
+    pts: 'PUAN',
+    loading: 'Veriler yükleniyor',
+    error: 'Veriler yüklenemedi. Lütfen sayfayı yenile.',
+    regionsMap: {
+      'TURKEY REGION': 'TÜRKİYE',
+      'WEU REGION': 'WEU',
+      'CIS REGION': 'CIS'
+    }
+  }
+};
+
+let currentLang = localStorage.getItem(LANG_KEY) === 'tr' ? 'tr' : 'en';
+let currentTeams = [];
+let currentRegions = [];
+
+function t(key) {
+  return COPY[currentLang][key];
+}
 
 // Takım logoları — yeni takım eklendikçe buraya ekle
 // Değer string ise tek logo, dizi ise yan yana birden fazla logo gösterilir.
@@ -56,6 +106,16 @@ function parseCSV(text) {
 function num(v) {
   const n = parseInt(v, 10);
   return isNaN(n) ? 0 : n;
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
 }
 
 // Puan çarpanları — sheet'te adet tutuluyor, görüntüde puana çevrilir.
@@ -150,21 +210,17 @@ function extractData(rows) {
 // M (idx 12) kolonunda "TURKEY REGION / WEU REGION / CIS REGION" etiketlerini ara,
 // N (idx 13) kolonundan puanı oku. Satır kayarsa kırılmaması için tüm CSV'yi tarar.
 function extractRegions(rows) {
-  const wanted = {
-    'TURKEY REGION': 'TÜRKİYE',
-    'WEU REGION': 'WEU',
-    'CIS REGION': 'CIS'
-  };
+  const regionKeys = ['TURKEY REGION', 'WEU REGION', 'CIS REGION'];
   const found = {};
   for (const r of rows) {
     if (!r) continue;
     const label = (r[12] || '').toUpperCase();
-    if (wanted[label] !== undefined && found[label] === undefined) {
+    if (regionKeys.includes(label) && found[label] === undefined) {
       found[label] = num(r[13]);
     }
   }
-  const list = Object.keys(wanted).map(key => ({
-    name: wanted[key],
+  const list = regionKeys.map(key => ({
+    key,
     points: found[key] || 0
   }));
   list.sort((a, b) => b.points - a.points);
@@ -182,7 +238,7 @@ function tableRow(item, index) {
   return `
     <div class="row ${getTopClass(index)}">
       <div class="cell rank">#${index + 1}</div>
-      <div class="cell team"><span class="team-text">${item.team}</span></div>
+      <div class="cell team"><span class="team-text">${escapeHTML(item.team)}</span></div>
       <div class="cell">${item.s1Skor}</div>
       <div class="cell">${item.s1Sira}</div>
       <div class="cell">${item.s2Skor}</div>
@@ -199,14 +255,15 @@ function renderRegions(regions) {
   if (!regions.length) return;
 
   const [first, ...others] = regions;
-  leader.querySelector('.region-leader-name').textContent = first.name;
+  leader.querySelector('.region-leader-name').textContent = t('regionsMap')[first.key] || first.key;
   leader.querySelector('.rl-points').textContent = first.points;
+  leader.querySelector('.rl-label').textContent = t('pts');
 
   const ordinals = ['2ND', '3RD'];
   rest.innerHTML = others.map((r, i) => `
     <li class="region-row">
       <span class="region-rank">${ordinals[i] || `${i + 2}TH`}</span>
-      <span class="region-name">${r.name}</span>
+      <span class="region-name">${t('regionsMap')[r.key] || r.key}</span>
       <span class="region-points">${r.points}</span>
     </li>
   `).join('');
@@ -216,24 +273,25 @@ function render(teams, regions) {
   const app = document.getElementById('app');
   const rows = teams.map(tableRow).join('');
   renderRegions(regions || []);
+  updateLanguageChrome();
 
   app.innerHTML = `
     <div class="leaderboard">
       <div class="group-header">
         <div class="gh-spacer"></div>
-        <div class="gh-group">STAGE 1</div>
-        <div class="gh-group">STAGE 2</div>
+        <div class="gh-group">${t('stage1')}</div>
+        <div class="gh-group">${t('stage2')}</div>
         <div class="gh-spacer end"></div>
       </div>
 
       <div class="col-header">
-        <div class="cell rank">RANK</div>
-        <div class="cell team">TEAM</div>
-        <div class="cell">KILLS</div>
-        <div class="cell">PLACEMENT</div>
-        <div class="cell">KILLS</div>
-        <div class="cell">PLACEMENT</div>
-        <div class="cell total">TOTAL</div>
+        <div class="cell rank">${t('rank')}</div>
+        <div class="cell team">${t('team')}</div>
+        <div class="cell">${t('kills')}</div>
+        <div class="cell">${t('placement')}</div>
+        <div class="cell">${t('kills')}</div>
+        <div class="cell">${t('placement')}</div>
+        <div class="cell total">${t('total')}</div>
       </div>
 
       <div class="rows-list">
@@ -246,6 +304,39 @@ function render(teams, regions) {
 
 let lastCSV = '';
 
+function updateLanguageChrome() {
+  document.documentElement.lang = currentLang;
+  document.title = t('title');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('.lang-button').forEach(button => {
+    button.classList.toggle('is-active', button.dataset.lang === currentLang);
+    button.setAttribute('aria-pressed', button.dataset.lang === currentLang ? 'true' : 'false');
+  });
+}
+
+function setLanguage(lang) {
+  if (!COPY[lang] || lang === currentLang) return;
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, currentLang);
+  updateLanguageChrome();
+  if (currentTeams.length) {
+    render(currentTeams, currentRegions);
+  } else {
+    const loading = document.querySelector('.loading');
+    if (loading) loading.textContent = t('loading');
+    const error = document.querySelector('.error');
+    if (error) error.firstChild.textContent = t('error');
+  }
+}
+
+function bindLanguageSwitch() {
+  document.querySelectorAll('.lang-button').forEach(button => {
+    button.addEventListener('click', () => setLanguage(button.dataset.lang));
+  });
+}
+
 async function fetchData() {
   const res = await fetch(CSV_URL + '&_t=' + Date.now());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -254,16 +345,20 @@ async function fetchData() {
 
 async function init() {
   const app = document.getElementById('app');
-  app.innerHTML = '<div class="loading">Veriler yükleniyor</div>';
+  bindLanguageSwitch();
+  updateLanguageChrome();
+  app.innerHTML = `<div class="loading">${t('loading')}</div>`;
 
   try {
     const text = await fetchData();
     lastCSV = text;
     const parsed = parseCSV(text);
-    render(extractData(parsed), extractRegions(parsed));
+    currentTeams = extractData(parsed);
+    currentRegions = extractRegions(parsed);
+    render(currentTeams, currentRegions);
   } catch (err) {
     console.error('Error loading data:', err);
-    app.innerHTML = `<div class="error">Failed to load data. Please refresh the page.<br><small>${err.message}</small></div>`;
+    app.innerHTML = `<div class="error">${t('error')}<br><small>${err.message}</small></div>`;
   }
 
   setInterval(async () => {
@@ -272,7 +367,9 @@ async function init() {
       if (text !== lastCSV) {
         lastCSV = text;
         const parsed = parseCSV(text);
-        render(extractData(parsed), extractRegions(parsed));
+        currentTeams = extractData(parsed);
+        currentRegions = extractRegions(parsed);
+        render(currentTeams, currentRegions);
       }
     } catch (e) {}
   }, 5000);
